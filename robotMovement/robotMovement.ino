@@ -1,18 +1,33 @@
-#define DIR_PIN_RIGHT 51
-#define PWM_PIN_RIGHT 3
+#define DIR_PIN_RIGHT 49
+#define PWM_PIN_RIGHT 2
 
-//#define DIR_PIN_LEFT 1
-//#define PWM_PIN_LEFT 2
-
+#define DIR_PIN_LEFT 51
+#define PWM_PIN_LEFT 3
+int flag = 1;
 void setup()
 {
     pinMode(DIR_PIN_RIGHT, OUTPUT);
     pinMode(DIR_PIN_LEFT, OUTPUT);
+    Serial.begin(9600);
 }
 
 void loop()
 {
-    rightEngineDriver(150);
+  int sensor = analogRead(A1);
+  if (flag == 1) {
+    rightEngineDriver(60);
+    leftEngineDriver(60);
+    if (sensor > 300) {
+      flag = 0;
+    }
+  } else {
+    rightEngineDriver(-60);
+    leftEngineDriver(-60);
+    delay(2000);
+    flag = 1;
+  }
+  Serial.println(sensor);
+  Serial.println(flag);
 }
 
 void rightEngineDriver(int a) {
