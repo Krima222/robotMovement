@@ -1,36 +1,33 @@
-//echo 11
-//trick 12
+#define STANDARD_SPEED 35
+#define DECELERATION 4
 
 #define DIR_PIN_RIGHT 49
 #define PWM_PIN_RIGHT 2
 
 #define DIR_PIN_LEFT 51
 #define PWM_PIN_LEFT 3
-int flag = 3;
+
 void setup()
 {
-    pinMode(DIR_PIN_RIGHT, OUTPUT);
-    pinMode(DIR_PIN_LEFT, OUTPUT);
-    Serial.begin(9600);
+  Serial.begin(9600);
+  pinMode(DIR_PIN_RIGHT, OUTPUT);
+  pinMode(DIR_PIN_LEFT, OUTPUT);
 }
 
 void loop()
 {
-  int sensor = analogRead(A0);
-  if (flag == 1) {
-    rightEngineDriver(60);
-    leftEngineDriver(60);
-    if (sensor > 300) {
-      flag = 0;
-    }
-  } else {
-    rightEngineDriver(-60);
-    leftEngineDriver(-60);
-    delay(2000);
-    flag = 1;
-  }
-  Serial.println(sensor);
-  Serial.println(flag);
+  int leftSensor = analogRead(A1);
+  int rigtSensor = analogRead(A0);
+  int cur = (leftSensor - rigtSensor + 7) * 0.9;
+  //Serial.print(leftSensor);
+  //Serial.print(' ');
+  //Serial.println(rigtSensor);
+  //Serial.println(cur);
+  rightEngineDriver(70 + cur);
+  leftEngineDriver(70 - cur);
+  Serial.print(70 - cur);
+  Serial.print(' ');
+  Serial.println(70 + cur);
 }
 
 void rightEngineDriver(int a) {
