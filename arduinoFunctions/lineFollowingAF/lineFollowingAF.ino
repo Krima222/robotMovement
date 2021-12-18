@@ -1,6 +1,3 @@
-#define STANDARD_SPEED 35
-#define DECELERATION 4
-
 #define DIR_PIN_RIGHT 49
 #define PWM_PIN_RIGHT 2
 
@@ -17,17 +14,15 @@ void setup()
 void loop()
 {
   int leftSensor = analogRead(A1);
-  int rigtSensor = analogRead(A0);
-  int cur = (leftSensor - rigtSensor + 7) * 0.9;
+  int rightSensor = analogRead(A0);
+
+  int cur = (leftSensor - rightSensor + 12) * 0.1;
   //Serial.print(leftSensor);
   //Serial.print(' ');
-  //Serial.println(rigtSensor);
-  //Serial.println(cur);
+  //Serial.println(rightSensor);
+  Serial.println(cur);
   rightEngineDriver(70 + cur);
   leftEngineDriver(70 - cur);
-  Serial.print(70 - cur);
-  Serial.print(' ');
-  Serial.println(70 + cur);
 }
 
 void rightEngineDriver(int a) {
