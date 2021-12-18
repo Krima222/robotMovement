@@ -16,13 +16,13 @@ void loop()
   int leftSensor = analogRead(A1);
   int rightSensor = analogRead(A0);
 
-  int cur = (leftSensor - rightSensor + 12) * 0.1;
+  int cur = (leftSensor - rightSensor + 12) * 0.2;
   //Serial.print(leftSensor);
   //Serial.print(' ');
   //Serial.println(rightSensor);
   Serial.println(cur);
-  rightEngineDriver(70 + cur);
-  leftEngineDriver(70 - cur);
+  rightEngineDriver(50 + cur);
+  leftEngineDriver(50 - cur);
 }
 
 void rightEngineDriver(int a) {
