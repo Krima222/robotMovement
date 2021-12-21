@@ -6,25 +6,25 @@
 
 void setup()
 {
-  //настраиваем ножки на выход
+  //Настраиваем ножки на выход
   pinMode(DIR_PIN_RIGHT, OUTPUT);
   pinMode(DIR_PIN_LEFT, OUTPUT);
 }
 
 void loop()
 {
-  //получаем значение с датчиков линии
+  //Получаем значение с датчиков линии
   int leftSensor = analogRead(A1);
   int rightSensor = analogRead(A0);
-  //находим разницу значений датчиков, умноженное на коефицициент 
+  //Находим разницу значений датчиков, умноженное на коефицициент 
   int cur = (leftSensor - rightSensor + 12) * 0.2;
 
-  //вызываем функции, в которых настраиваем скорость движения
+  //Вызываем функции, в которых настраиваем скорость движения
   rightEngineDriver(50 + cur);
   leftEngineDriver(50 - cur);
 }
 
-// 2 функции, для движения колес
+//2 функции, для движения колес
 void rightEngineDriver(int a) {
     if (a >= 0) {
       digitalWrite(DIR_PIN_RIGHT, LOW);
