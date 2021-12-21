@@ -6,30 +6,30 @@
 
 void setup()
 {
-  Serial.begin(9600);
+  //настраиваем ножки на выход
   pinMode(DIR_PIN_RIGHT, OUTPUT);
   pinMode(DIR_PIN_LEFT, OUTPUT);
 }
 
 void loop()
 {
+  //получаем значение с датчиков линии
   int leftSensor = analogRead(A1);
   int rightSensor = analogRead(A0);
-
+  //находим разницу значений датчиков, умноженное на коефицициент 
   int cur = (leftSensor - rightSensor + 12) * 0.2;
-  //Serial.print(leftSensor);
-  //Serial.print(' ');
-  //Serial.println(rightSensor);
-  Serial.println(cur);
+
+  //вызываем функции, в которых настраиваем скорость движения
   rightEngineDriver(50 + cur);
   leftEngineDriver(50 - cur);
 }
 
+// 2 функции, для движения колес
 void rightEngineDriver(int a) {
     if (a >= 0) {
       digitalWrite(DIR_PIN_RIGHT, LOW);
       analogWrite(PWM_PIN_RIGHT, a);
-    } else if (a < 0) {
+    } else {
       digitalWrite(DIR_PIN_RIGHT, HIGH);
       analogWrite(PWM_PIN_RIGHT, 255 + a);
     }
@@ -39,7 +39,7 @@ void leftEngineDriver(int a) {
     if (a >= 0) {
       digitalWrite(DIR_PIN_LEFT, LOW);
       analogWrite(PWM_PIN_LEFT, a);
-    } else if (a < 0) {
+    } else {
       digitalWrite(DIR_PIN_LEFT, HIGH);
       analogWrite(PWM_PIN_LEFT, 255 + a);
     }
