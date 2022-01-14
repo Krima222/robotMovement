@@ -10,8 +10,8 @@ void setup() {
 }
 
 void loop() {
-  rightEngineDriver(60);
-  leftEngineDriver(60);
+  rightEngineDriver(100);
+  leftEngineDriver(100);
 }
 
 void rightEngineDriver(int a) {

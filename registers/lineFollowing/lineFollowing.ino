@@ -35,6 +35,7 @@ ISR(ADC_vect)
 
 int main()
 {
+  Serial.begin(9600);
   //запрещает любые прерывания, в этом участке кода
   cli();
 
@@ -69,6 +70,7 @@ int main()
     int cur = (sensLeft - sensRight + 12) * 2.5;
     rightEngineDriver(500 + cur);
     leftEngineDriver(800 - cur);
+    Serial.print("aaaaaaaaaa");
   }
 }
 
