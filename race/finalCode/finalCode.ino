@@ -17,11 +17,9 @@
 //переменные для энкодера
 int counter_R = 0;
 int currentStateCLK_R;
-int lastStateCLK_R;
 
 int counter_L = 0;
 int currentStateCLK_L;
-int lastStateCLK_L;
 
 //переменная для счёта дистанции до предмета
 int distance;
@@ -38,7 +36,7 @@ int turningState;
 //переменная для чередования направлений объезда, изначально справа
 int detourDirection;
 
-//текущее растояние от старта 
+//текущее растояние от старта
 int passedDistance;
 
 //заданной расстояние до финиша
@@ -80,13 +78,9 @@ void setup() {
   pinMode(CLK_L, INPUT_PULLUP);
   pinMode(DT_L, INPUT_PULLUP);
 
-  //считываем начальное состояние пинов 19 и 20
-  lastStateCLK_R = digitalRead(CLK_R);
-  lastStateCLK_L = digitalRead(CLK_L);
-
   //настройка прерываний на пинах 19 и 20
-  attachInterrupt(4, updateEncoder_R, CHANGE); //19
-  attachInterrupt(3, updateEncoder_L, CHANGE); //20
+  attachInterrupt(4, updateEncoder_R, RISING); //19
+  attachInterrupt(3, updateEncoder_L, RISING); //20
 
   //вызов функции движения робота на заданное растояние в см
   passingDistance(1000);
@@ -137,7 +131,8 @@ void loop() {
 
 
   //объезд препятствий
-  if (detourDirection == 0) { //чередование направления объезда, изначально объезжает справа
+  //чередование направления объезда, изначально объезжает справа
+  if (detourDirection == 0) { 
     if (distance <= 40 && distance >= 25 && turningState == 0) {
       state = "stop";
       turningState ++;
@@ -216,7 +211,8 @@ void loop() {
   }
   k = PIDRegulator(diff , 100);
 
-  if (passedDistance >= fullInterval) { //останавливаем всё, когда доехал
+  //останавливаем всё, когда доехал
+  if (passedDistance >= fullInterval) { 
     state = "finish";
     rightEngineDriver(0);
     leftEngineDriver(0);
@@ -251,38 +247,25 @@ void updateEncoder_R() {
   //считываем текущее состояние CLK_R
   currentStateCLK_R = digitalRead(CLK_R);
   //если последнее и текущее состояние CLK_R различаются, то произошел импульс.
-  //реагируем только на одно изменение состояния, чтобы избежать двойного счета
-  if (currentStateCLK_R != lastStateCLK_R  && currentStateCLK_R == 1) {
-    //если состояние DT_R отличается от состояния CLK_R, то
-    //энкодер вращается против часовой стрелки, поэтому уменьшаем
-    if (digitalRead(DT_R) != currentStateCLK_R) {
-      counter_R --;
-    } else {
-      //энкодер вращается по часовой стрелке, поэтому увеличиваем
-      counter_R ++;
-    }
+  if (digitalRead(DT_R) != currentStateCLK_R) {
+    //энкодер вращается против часовой стрелке, поэтому уменьшается
+    counter_R --;
+  } else {
+    //энкодер вращается по часовой стрелке, поэтому увеличиваем
+    counter_R ++;
   }
-  //запоминаем последнее состояние CLK_L
-  lastStateCLK_R = currentStateCLK_R;
 }
 
 void updateEncoder_L() {
   //считываем текущее состояние CLK
   currentStateCLK_L = digitalRead(CLK_L);
-  //если последнее и текущее состояние CLK различаются, то произошел импульс.
-  //реагируем только на одно изменение состояния, чтобы избежать двойного счета
-  if (currentStateCLK_L != lastStateCLK_L  && currentStateCLK_L == 1) {
-    //если состояние DT отличается от состояния CLK, то
-    //энкодер вращается против часовой стрелки, поэтому уменьшаем
-    if (digitalRead(DT_L) != currentStateCLK_L) {
-      counter_L --;
-    } else {
-      //энкодер вращается по часовой стрелке, поэтому увеличиваем
-      counter_L ++;
-    }
+  //энкодер вращается против часовой стрелки, поэтому уменьшаем
+  if (digitalRead(DT_L) != currentStateCLK_L) {
+    counter_L --;
+  } else {
+    //энкодер вращается по часовой стрелке, поэтому увеличиваем
+    counter_L ++;
   }
-  //запоминаем последнее состояние CLK
-  lastStateCLK_L = currentStateCLK_L;
 }
 
 //функции для настройки направления и скорости двигателей
