@@ -42,7 +42,7 @@ int turningState;
 int passedDistance;
 
 //коэффициенты усиления пропорциональной, интегрирующей и дифференцирующей составляющих регулятора
-float Kp = 0.8;
+float Kp = 1.1;
 float Ki = 0;
 float Kd = 0;
 //целевой результат
@@ -133,7 +133,7 @@ void loop() {
   }
 
   //объезд препятствий
-  if (distance <= 40 && distance >= 25 && turningState == 0) {
+  if (distance <= 40 && distance >= 25 && turningState == 0 && state != "stop") {
     state = "stop";
     turningState ++;
   }
@@ -148,6 +148,7 @@ void loop() {
   if (turningState == 3 && state == "stop") {
     turn(-60);
     turningState ++;
+    //passedDistance += 972;
   }
   if (turningState == 4 && state == "stop") {
     passingDistance(70);
@@ -160,6 +161,7 @@ void loop() {
   if (turningState == 6 && state == "stop") {
     passingDistance(400);
     turningState = 0;
+    //passedDistance += 972;
   }
 
   //  if (state == "stop") { потенциально более оптимизированный код (пока, не стоит проверяет всего 1 условие, а не 6)
@@ -255,6 +257,11 @@ void loop() {
     diff = (counter_R - speedLastCounter_R) - (counter_L - speedLastCounter_L);
     speedLastCounter_R = counter_R;
     speedLastCounter_L = counter_L;
+    
+//    if (state == "forward") { //если едет вперёд, прибавляем проеханное количество дискрет за каждые 100мс
+//      passedDistance += counter_L - speedLastCounter_L;
+//    }
+    
     speedTimer = millis();
   }
   k = PIDRegulator(diff , 100);
@@ -263,7 +270,54 @@ void loop() {
   Serial.print(" ");
   Serial.println(counter_L - speedLastCounter_L);
 
+//  //сканирование
+//  if (state == "stop" && scanStatus == 0 && turningState == 0) {
+//    turn(20);
+//    scanStatus++;
+//  }
+//  if (scanStatus == 1 && state == "stop") {
+//    turn(-20);
+//    scanStatus++;
+//  }
+//  if (scanStatus == 2 && obstacleDetected == "no" && state == "stop") {
+//    turn(-20);
+//    scanStatus++;
+//  }
+//  if (scanStatus == 3 && state == "stop") {
+//    turn(20);
+//    scanStatus++;
+//  }
+//  if (scanStatus == 4 && obstacleDetected == "no" && state == "stop") { //если препятствий нет, едем дальше
+//    passingDistance(25);
+//  }
+//
+//  if ((scanStatus == 1 || scanStatus == 2) && distance <= 40 && distance >= 25 && obstacleDetected == "no") {
+//    obstacleDetected = "right";
+//  }
+//  if ((scanStatus == 3 || scanStatus == 4) && distance <= 40 && distance >= 25 && obstacleDetected == "no") {
+//    obstacleDetected = "left";
+//  }
+//
+//  if (scanStatus == 2 && obstacleDetected == "right" && state == "stop") { //если справа было препятствие объезжаем
+//    scanStatus = 0;
+//    detourDirection = 1; //влево
+//    turningState++;
+//  }
+//  if (scanStatus == 4 && obstacleDetected == "left" && state == "stop") { //если слева было препятствие объезжаем
+//    scanStatus = 0;
+//    detourDirection = 0; //вправо
+//    turningState++;
+//  }
+
+//  if (passedDistance >= 7200) { останавливаем всё, когда доехал
+//    state = "finish";
+//    rightEngineDriver(0);
+//    leftEngineDriver(0);
+//  }
 }
+
+//int scanStatus;
+//String obstacleDetected = "no";
 
 
 
@@ -272,7 +326,7 @@ void passingDistance (int distance) {
   if (distance > 0) {
     state = "forward";
   } else if (distance < 0) {
-    state = "back";
+    state = "back"; 
   }
   //устанавливаем целевое состояние для колёс (18,5 дискрет = 1 см) состояние при котором он останавливается
   target_R = counter_R + (distance * 18.5);
